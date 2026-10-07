@@ -555,6 +555,95 @@ These notes are useful starting information, but they are \*\*not automatically 
 Always verify claims against the actual implementation.
 
 
+# SESSION CONTINUATION / CONTEXT LIMIT PROTOCOL
+
+A Claude session may reach a conversation, context, usage, or execution limit while a task is only partially complete.
+
+A limit is NOT considered a completed task.
+
+Before stopping because of a limit, the current session MUST persist enough information for another Claude session to continue.
+
+## Before Stopping
+
+The session must:
+
+1. Save all completed work.
+2. Save all important discoveries.
+3. Update `PROJECT_STATE.md`.
+4. Update `TASKS.md`.
+5. Update `HANDOFF.md`.
+6. Update `DECISIONS.md` if a meaningful decision was made.
+7. Review `git diff`.
+8. Commit the work.
+9. Push the commit to GitHub.
+
+## HANDOFF.md Must Explain
+
+* what the session was trying to accomplish
+* what has been completed
+* what is currently in progress
+* the exact point where work stopped
+* files that were changed
+* files that still need changes
+* known bugs
+* known risks
+* important discoveries
+* decisions that were made
+* what should happen next
+* the exact recommended first action for the next session
+
+Do NOT write vague handoffs such as:
+
+> "Continue the revamp."
+
+Instead write a precise continuation point such as:
+
+> "EggService layer-generation refactor is 70% complete. Layer 1 and Layer 2 now use the new patch metadata structure. Layer 3 is not migrated yet. Do not modify ToolService. Next: finish the Layer 3 conversion in EggService.lua, then run the existing egg-break test."
+
+## Next Session Protocol
+
+A new Claude session MUST assume that the previous session may have stopped unexpectedly.
+
+Before doing new work:
+
+1. Read `CLAUDE.md`.
+2. Read `HANDOFF.md`.
+3. Read `PROJECT_STATE.md`.
+4. Read `TASKS.md`.
+5. Read `DECISIONS.md`.
+6. Run `git status`.
+7. Run `git log --oneline -5`.
+8. Inspect the latest commit.
+9. Verify the handoff against the actual code.
+10. Continue from the documented stopping point.
+
+Do NOT ask the project owner to repeat the previous session's work unless the repository is genuinely missing the required information.
+
+## Repository Is the Source of Continuity
+
+The previous Claude conversation is NOT the source of truth.
+
+GitHub + repository files are the source of truth.
+
+A new Claude session must be able to continue from the repository even when the previous conversation is unavailable.
+
+## Never Claim Partial Work Is Complete
+
+If a session is interrupted during a task:
+
+* mark it `[~]` in `TASKS.md`
+* document exactly what remains in `HANDOFF.md`
+* do not mark it `[x]`
+
+## Push Before Handoff
+
+A handoff that exists only in the local working directory is NOT sufficient.
+
+The current session should push the handoff commit to GitHub whenever practical before stopping.
+
+The next session should always begin from the latest pushed repository state.
+
+
 
 \---
 
